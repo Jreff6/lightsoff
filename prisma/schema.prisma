@@ -1,0 +1,231 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USERS & AUTHENTICATION
+// ============================================
+
+enum UserRole {
+  USER
+  BRAND
+  ADMIN
+}
+
+model User {
+  id            String    @id @default(cuid())
+  clerkId       String    @unique
+  email         String    @unique
+  username      String?   @unique
+  role          UserRole  @default(USER)
+  
+  brand         Brand?
+  favorites     Favorite[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([clerkId])
+  @@index([email])
+}
+
+// ============================================
+// BRANDS
+// ============================================
+
+enum BrandStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+model Brand {
+  id            String        @id @default(cuid())
+  userId        String        @unique
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  name          String        @unique
+  slug          String        @unique
+  description   String?       @db.Text
+  country       String?
+  foundedYear   Int?
+  website       String?
+  instagram     String?
+  
+  logoUrl       String?
+  coverUrl      String?
+  
+  status        BrandStatus   @default(PENDING)
+  verifiedAt    DateTime?
+  
+  collections   Collection[]
+  
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([slug])
+  @@index([status])
+}
+
+// ============================================
+// COLLECTIONS
+// ============================================
+
+enum Season {
+  SPRING_SUMMER
+  FALL_WINTER
+}
+
+enum CollectionStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Collection {
+  id            String            @id @default(cuid())
+  brandId       String
+  brand         Brand             @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  
+  name          String
+  slug          String
+  year          Int
+  season        Season
+  description   String?           @db.Text
+  
+  coverImageUrl String?
+  
+  status        CollectionStatus  @default(DRAFT)
+  publishedAt   DateTime?
+  
+  items         Item[]
+  
+  viewCount     Int               @default(0)
+  
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@unique([brandId, year, season])
+  @@index([brandId])
+  @@index([status])
+  @@index([year, season])
+}
+
+// ============================================
+// ITEMS
+// ============================================
+
+enum ItemCategory {
+  TOP
+  BOTTOM
+  DRESS
+  OUTERWEAR
+  FOOTWEAR
+  ACCESSORY
+  BAG
+  JEWELRY
+  OTHER
+}
+
+model Item {
+  id            String        @id @default(cuid())
+  collectionId  String
+  collection    Collection    @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  
+  name          String
+  description   String?       @db.Text
+  category      ItemCategory
+  
+  materials     String[]
+  colors        String[]
+  sizes         String[]
+  
+  retailPrice   Float?
+  currency      String?       @default("EUR")
+  
+  images        ItemImage[]
+  favorites     Favorite[]
+  
+  viewCount     Int           @default(0)
+  position      Int           @default(0)
+  
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([collectionId])
+  @@index([category])
+}
+
+// ============================================
+// IMAGES
+// ============================================
+
+model ItemImage {
+  id            String    @id @default(cuid())
+  itemId        String
+  item          Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  
+  cloudflareId  String    @unique
+  url           String
+  variant       String?
+  
+  width         Int?
+  height        Int?
+  alt           String?
+  position      Int       @default(0)
+  
+  createdAt     DateTime  @default(now())
+
+  @@index([itemId])
+}
+
+// ============================================
+// FAVORITES
+// ============================================
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itemId    String
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+
+  @@unique([userId, itemId])
+  @@index([userId])
+}
+
+// ============================================
+// MODERATION
+// ============================================
+
+enum ModerationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model ModerationQueue {
+  id              String            @id @default(cuid())
+  
+  entityType      String
+  entityId        String
+  
+  status          ModerationStatus  @default(PENDING)
+  reviewedBy      String?
+  reviewedAt      DateTime?
+  rejectionReason String?           @db.Text
+  
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([status])
+  @@index([entityType, entityId])
+}
+

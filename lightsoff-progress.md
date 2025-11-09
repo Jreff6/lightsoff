@@ -54,8 +54,10 @@
 
 ### 2.1 Repository GitHub
 - [x] Initialiser Git localement
-- [ ] Créer le repository sur GitHub (nom : `lightsoff`)
-- [ ] Lier le repository local au remote GitHub
+- [x] Créer le repository sur GitHub (nom : `lightsoff`)
+- [x] Lier le repository local au remote GitHub
+  - ✅ Remote : https://github.com/Jreff6/lightsoff.git
+  - ✅ Commit initial créé et poussé
 
 ### 2.2 Créer le projet Next.js
 - [x] Créer la structure de base Next.js
@@ -79,7 +81,7 @@
   - ✅ hooks/, types/, styles/
   - ✅ prisma/, public/
 
-**Statut :** ✅ Presque terminé - Il reste à créer le repository GitHub
+**Statut :** ✅ Terminé - Repository GitHub créé et lié
 
 ---
 
@@ -147,42 +149,43 @@
 ## 🗄️ Étape 6 : Configuration Base de Données avec Prisma
 
 ### 6.1 Initialiser Prisma
-- [ ] Exécuter `npx prisma init`
-- [ ] Créer le dossier `prisma/`
+- [x] Le dossier `prisma/` existe déjà
 
 ### 6.2 Schema Prisma
-- [ ] Créer/remplacer `prisma/schema.prisma`
-- [ ] Définir tous les models (User, Brand, Collection, Item, etc.)
+- [x] Créer/remplacer `prisma/schema.prisma`
+- [x] Définir tous les models (User, Brand, Collection, Item, ItemImage, Favorite, ModerationQueue)
 
 ### 6.3 Client Prisma
-- [ ] Créer `src/lib/prisma.ts`
+- [x] Créer `src/lib/prisma.ts`
 
 ### 6.4 Migration
+- [ ] ⚠️ **Action requise** : Créer le fichier `.env.local` avec DATABASE_URL d'abord
 - [ ] Exécuter `npx prisma migrate dev --name init`
 - [ ] Générer le client Prisma
 
 ### 6.5 Seed
-- [ ] Créer `prisma/seed.ts`
-- [ ] Configurer dans `package.json`
-- [ ] Installer ts-node
-- [ ] Exécuter le seed
+- [x] Créer `prisma/seed.ts`
+- [x] Configurer dans `package.json`
+- [x] Installer ts-node
+- [ ] Exécuter le seed (après la migration)
 
-**Statut :** ⏳ Non commencé
+**Statut :** ✅ Fichiers créés - ⏳ En attente de `.env.local` pour la migration
 
 ---
 
 ## 🔍 Étape 7 : Configuration Meilisearch
 
 ### 7.1 Vérifier Meilisearch
-- [ ] Vérifier que Meilisearch tourne
-- [ ] Tester `curl http://localhost:7700/health`
+- [x] Vérifier que Meilisearch tourne (conteneur Docker actif)
+- [ ] Tester `curl http://localhost:7700/health` (optionnel)
 
 ### 7.2 Client Meilisearch
-- [ ] Créer `src/lib/meilisearch.ts`
-- [ ] Initialiser les index
-- [ ] Configurer les attributs (filterable, sortable, searchable)
+- [x] Créer `src/lib/meilisearch.ts`
+- [x] Initialiser les index (fonction `initializeMeilisearch()`)
+- [x] Configurer les attributs (filterable, sortable, searchable)
+- [x] Créer les helpers (syncItemToMeilisearch, deleteItemFromMeilisearch)
 
-**Statut :** ⏳ Non commencé
+**Statut :** ✅ Terminé - Client et configuration prêts
 
 ---
 
@@ -203,12 +206,12 @@
 
 ## 🎯 Prochaines étapes
 
-1. ✅ Étape 1 : Configuration Docker - Terminée
-2. ✅ Étape 2 : Initialisation Next.js - Presque terminée
-3. ⏳ Créer le repository GitHub (voir `GITHUB-SETUP.md`)
-4. ⏳ Étape 3 : Configuration Cloudflare
-5. ⏳ Étape 4 : Configuration Clerk
-6. ⏳ Étape 5 : Variables d'environnement
-7. ⏳ Étape 6 : Configuration Prisma
-8. ⏳ Étape 7 : Configuration Meilisearch
+1. ✅ Étape 0 : Prérequis - Terminée
+2. ✅ Étape 1 : Configuration Docker - Terminée
+3. ✅ Étape 2 : Initialisation Next.js - Terminée
+4. ⏳ Étape 3 : Configuration Cloudflare (voir `CLOUDFLARE-SETUP.md`)
+5. ⏳ Étape 4 : Configuration Clerk (voir `CLERK-SETUP.md`)
+6. ⏳ Étape 5 : Variables d'environnement (créer `.env.local`)
+7. ✅ Étape 6 : Configuration Prisma - Fichiers créés (migration en attente)
+8. ✅ Étape 7 : Configuration Meilisearch - Terminée
 
